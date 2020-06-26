@@ -28,118 +28,124 @@
 <body>
     <canvas id="canvas_id"></canvas>
     <script>
-        let canvas = /** @type {HTMLCanvasElement} */ (document.getElementById("canvas_id"));
 
-        document.onmousemove = (e) => {
-            mouse_pos["x"] = e.x;
-            mouse_pos["y"] = e.y;
-        }
+        function canvas_abyss(canvas_id){
 
-        let color_set = [
-            "#cf7500",
-            "rgb(50,50,50)",
-            "rgb(100,100,100)",
-        ]
+            let canvas = /** @type {HTMLCanvasElement} */ (document.getElementById(canvas_id));
 
-        let mouse_pos = {
-            "x": 0,
-            "y": 0
-        };
+            document.onmousemove = (e) => {
+                mouse_pos["x"] = e.x;
+                mouse_pos["y"] = e.y;
+            }
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+            let color_set = [
+                "#cf7500",
+                "rgb(50,50,50)",
+                "rgb(100,100,100)",
+            ]
 
-        let x_center = window.innerWidth/2;
+                let mouse_pos = {
+                    "x": 0,
+                    "y": 0
+                };
 
-        let ctx = canvas.getContext("2d");
-
-        window.addEventListener("resize", () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-        });
 
-        function draw_rotate_square(x, y, size, angle, color) {
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate(angle * Math.PI / 180);
-            ctx.beginPath();
-            ctx.rect(-size / 2, -size / 2, size, size);
-            ctx.strokeStyle = color;
-            ctx.stroke();
-            ctx.restore();
-        }
+            let x_center = window.innerWidth/2;
 
-        function mirrored_square(x, y, size) {
+            let ctx = canvas.getContext("2d");
 
-            this.ox = x;
-            this.oy = y;
-            this.x = 0;
-            this.y = 0;
-            this.mx = 0;
-            this.my = 0;
-            this.size = size;
-            this.degrees = Math.random() * 360;
-            this.degree_step = 10 + Math.random() * 10;
-            this.move_step = canvas.width * 0.0;
-            this.strokeStyle = "rgb(0,0,0)";
-            this.first_render = true;
-            this.max_white = 150;
+            window.addEventListener("resize", () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
 
-            this.mouse_prox = 150;
-            this.touched = false;
-
-            this.draw = () => {
-                draw_rotate_square(this.x, this.y, this.size, this.degrees, this.strokeStyle);
-                draw_rotate_square(this.mx, this.my, this.size, -this.degrees, this.strokeStyle);
+            function draw_rotate_square(x, y, size, angle, color) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle * Math.PI / 180);
+                ctx.beginPath();
+                ctx.rect(-size / 2, -size / 2, size, size);
+                ctx.strokeStyle = color;
+                ctx.stroke();
+                ctx.restore();
             }
 
-            this.update = () => {
-                this.current_move_target = Math.random();
-                this.x = (Math.random() * this.move_step + this.ox) % canvas.width;
-                this.y = (Math.random() * this.move_step + this.oy) % canvas.height;
-                this.mx = canvas.width - this.x;
-                this.my = this.y;
-                this.degrees = (this.degrees + this.degree_step) % 360;
+            function mirrored_square(x, y, size) {
 
-                if (
-                    (Math.abs(mouse_pos.x - this.ox) <= this.mouse_prox) &&
-                    (Math.abs(mouse_pos.y - this.oy) <= this.mouse_prox)
-                ) {
-                    this.first_render = false;
-                    if (!this.touched) {
-                        this.strokeStyle = color_set[Math.floor(Math.random() * color_set.length)];
-                        this.touched = true;
+                this.ox = x;
+                this.oy = y;
+                this.x = 0;
+                this.y = 0;
+                this.mx = 0;
+                this.my = 0;
+                this.size = size;
+                this.degrees = Math.random() * 360;
+                this.degree_step = 10 + Math.random() * 10;
+                this.move_step = canvas.width * 0.0;
+                this.strokeStyle = "rgb(0,0,0)";
+                this.first_render = true;
+                this.max_white = 150;
+
+                this.mouse_prox = 150;
+                this.touched = false;
+
+                this.draw = () => {
+                    draw_rotate_square(this.x, this.y, this.size, this.degrees, this.strokeStyle);
+                    draw_rotate_square(this.mx, this.my, this.size, -this.degrees, this.strokeStyle);
+                }
+
+                this.update = () => {
+                    this.current_move_target = Math.random();
+                    this.x = (Math.random() * this.move_step + this.ox) % canvas.width;
+                    this.y = (Math.random() * this.move_step + this.oy) % canvas.height;
+                    this.mx = canvas.width - this.x;
+                    this.my = this.y;
+                    this.degrees = (this.degrees + this.degree_step) % 360;
+
+                    if (
+                            (Math.abs(mouse_pos.x - this.ox) <= this.mouse_prox) &&
+                            (Math.abs(mouse_pos.y - this.oy) <= this.mouse_prox)
+                       ) {
+                        this.first_render = false;
+                        if (!this.touched) {
+                            this.strokeStyle = color_set[Math.floor(Math.random() * color_set.length)];
+                            this.touched = true;
+                        }
+                    } else if (this.first_render) {
+                        let color = this.max_white * (1 - (((Math.abs(x_center - this.ox) / x_center))/0.4));
+                        this.strokeStyle = `rgb(${color},${color},${color})`;
                     }
-                } else if (this.first_render) {
-                    let color = this.max_white * (1 - (((Math.abs(x_center - this.ox) / x_center))/0.4));
-                    this.strokeStyle = `rgb(${color},${color},${color})`;
-                }
-                else {
-                    this.strokeStyle = "rgb(0,0,0)";
-                    this.touched = false;
+                    else {
+                        this.strokeStyle = "rgb(0,0,0)";
+                        this.touched = false;
+                    }
+
+                    this.draw();
                 }
 
-                this.draw();
             }
 
-        }
+            let n_of_s = 64;
 
-        let n_of_s = 64;
+            let squares = [];
 
-        let squares = [];
-
-        for (let i = 0; i < n_of_s; i++) {
-            squares.push(new mirrored_square(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 500));
-        }
-
-        function animate() {
-            for (s in squares) {
-                squares[s].update();
+            for (let i = 0; i < n_of_s; i++) {
+                squares.push(new mirrored_square(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 500));
             }
-            requestAnimationFrame(animate);
+
+            function animate() {
+                for (s in squares) {
+                    squares[s].update();
+                }
+                requestAnimationFrame(animate);
+            }
+
+            animate();
         }
 
-        animate();
+        canvas_abyss("canvas_id");
 
     </script>
     <div id="text_id">ABYSS</div>
