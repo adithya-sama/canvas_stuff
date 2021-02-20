@@ -12,15 +12,22 @@
             position: fixed;
         }
 
-        #text_id {
+        #text_id_shadow {
+            color: rgb(162 0 0);
+            font-size: 45px;
+            z-index: 1;
+        }
+
+        .text_id {
             position: absolute;
-            color: wheat;
+            color: rgb(255 23 23);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             font-size: 50px;
             font-family: system-ui;
             font-weight: lighter;
+            z-index: 2;
         }
     </style>
 </head>
@@ -185,7 +192,8 @@
         );
 
     </script>
-    <div id="text_id">ABYSS</div>
+    <div class="text_id">ABYSS</div>
+    <div class="text_id" id="text_id_shadow">ABYSS</div>
 </body>
 
 </html>
