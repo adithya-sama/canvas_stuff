@@ -12,12 +12,6 @@
             position: fixed;
         }
 
-        #text_id_shadow {
-            color: rgb(162 0 0);
-            font-size: 45px;
-            z-index: 1;
-        }
-
         .text_id {
             position: absolute;
             color: rgb(255 23 23);
@@ -29,6 +23,20 @@
             font-weight: lighter;
             z-index: 2;
         }
+
+        .boxes {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            transform: translate(-50%, -50%);
+            top: 50%;
+            left: 50%;
+            border-style: solid;
+            border-width: 0px;
+            transition-duration: 4s;
+            transition-timing-function: ease;
+        }
+
     </style>
 </head>
 
@@ -192,8 +200,45 @@
         );
 
     </script>
-    <div class="text_id">ABYSS</div>
-    <div class="text_id" id="text_id_shadow">ABYSS</div>
+    <div id="center_text">
+        <div class="text_id" style=" color: rgb(120 0 0); font-size: 35px;">ABYSS</div>
+        <div class="text_id" style=" color: rgb(140 0 0); font-size: 40px;">ABYSS</div>
+        <div class="text_id" style=" color: rgb(162 0 0); font-size: 45px;">ABYSS</div>
+        <div class="text_id">ABYSS</div>
+    </div>
+    <div class="boxes"></div>
+    <div class="boxes"></div>
+    <div class="boxes"></div>
+    <div class="boxes"></div>
+    <div class="boxes"></div>
+    <script>
+
+        let boxes = document.getElementsByClassName("boxes");
+        let text_div = document.getElementById("center_text");
+        text_div.onmouseenter = function(){
+            let width=10;
+            let size = 200;
+            let color = 255;
+            let direction = -45;
+            let td = 3;
+            for(let i=0; i < boxes.length; i++){
+                boxes[i].style=
+                `transform: translate(-50%, -50%) rotate(${direction}deg); border-width:${width}px; width:${size}px; height:${size}px; border-color:rgb(${color},${color},${color}); transition-duration: ${td}s`;
+                width -= 2;
+                size -= 30;
+                color -= 50;
+                direction *= -1;
+                td -= 0.5;
+            }
+        }
+
+        text_div.onmouseleave = function(){
+            for(let i=0; i < boxes.length; i++){
+                boxes[i].style="";
+            }
+        }
+
+    </script>
 </body>
 
 </html>
