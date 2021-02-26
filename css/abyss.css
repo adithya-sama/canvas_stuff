@@ -1,0 +1,33 @@
+body {
+    margin: 0;
+    border: 0;
+}
+
+canvas {
+    background-color: rgb(0, 0, 0);
+    position: fixed;
+}
+
+.text_id {
+    position: absolute;
+    color: rgb(255 23 23);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
+    font-family: system-ui;
+    font-weight: lighter;
+    z-index: 2;
+}
+
+.boxes {
+    position: absolute;
+    height: 50%;
+    width: 50%;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    border-style: solid;
+    border-width: 0px;
+    transition-timing-function: ease;
+}
