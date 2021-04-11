@@ -1,0 +1,9 @@
+body {
+    margin: 0;
+    border: 0;
+}
+
+canvas {
+    background-color: rgb(0, 0, 0);
+    position: fixed;
+}

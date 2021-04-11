@@ -39,6 +39,7 @@ function abyss(
             return_rgb[i] = rgb[i] - ((rgb[i] / 100) * step);
         }
     }
+
     // some stupid custom function
     function curve(x) {
         // more z more squares.
