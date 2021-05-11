@@ -3,7 +3,19 @@ body {
     border: 0;
 }
 
-canvas {
-    background-color: rgb(0, 0, 0);
-    position: fixed;
+#viewport {
+    /**
+     * Position relative so that canvas elements
+     * inside of it will be relative to the parent
+     */
+    position: relative;
+}
+
+#viewport canvas {
+    /**
+     * Position absolute provides canvases to be able
+     * to be layered on top of each other
+     * Be sure to remember a z-index!
+     */
+    position: absolute;
 }

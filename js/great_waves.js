@@ -22,6 +22,7 @@ function add_vec(x, y, x2, y2){
 }
 
 function rotate_vector(point, deg) {
+    if(deg == 0) return;
     deg = degrees_to_radians(deg);
     let cos = Math.cos(deg);
     let sin = Math.sin(deg);
@@ -83,16 +84,7 @@ function great_waves(canvas_id, wave_init_speed = 1){
 
     function make_wave(event){
         if (!first && mouse_pos.vm > wave_init_speed) {
-            waves.push(
-                new WaveOld(
-                    x = mouse_pos.x,
-                    y = mouse_pos.y,
-                    ox = old_mouse_pos.x,
-                    oy = old_mouse_pos.y,
-                    spread = 60,
-                    speed = 0.05
-                )
-            );
+            waves.push();
         }
         first = false;
     }
@@ -101,174 +93,138 @@ function great_waves(canvas_id, wave_init_speed = 1){
 
     function update_waves(){
         for(let i=0; waves[i] != undefined; i++){
-            waves[i].update();
+            waves[i].draw();
             if(waves[i].deleted){
                 waves.splice(i, 1);
             }
         }
     }
 
-
-    class WaveOld {
-
-        constructor(x, y, ox, oy, spread, speed, alive_till=2000) {
-
-            this.alive_till = get_timestamp() + alive_till;
-            this.x = x;
-            this.y = y;
-            this.ox = ox;
-            this.oy = oy;
-            this.x = this.x - this.ox;
-            this.y = this.y - this.oy;
-            this.spread = spread;
-            this.speed = speed;
-            this.color = [0, 69, 117, 1]; //rgb(0, 69, 117)
-            this.start = false;
-            this.deleted = false;
-            this.init();
-
-        }
-
-        draw_curve(){
-            ctx.save();
-            ctx.beginPath();
-            ctx.strokeStyle = arr2rgba(this.color);
-            ctx.moveTo(...this.get_orig_cord(...this.wave_ends[0]));
-            ctx.quadraticCurveTo(
-                ...this.get_orig_cord(...this.wave_center),
-                ...this.get_orig_cord(...this.wave_ends[1])
-            );
-            ctx.stroke();
-            ctx.restore();
-            this.wave_ends[0] = add_vec(...(this.wave_ends[0]), ...(this.wave_ends_speed[0]));
-            this.wave_center = add_vec(...this.wave_center, ...this.center_speed);
-            this.wave_ends[1] = add_vec(...(this.wave_ends[1]), ...(this.wave_ends_speed[1]));
-            fade_color(this.color, 2, this.color);
-        };
-
-        get_orig_cord(x, y){
-            return [x + this.ox, y + this.oy];
-        }
-
-        get_wave_ends(x, y, angle){
-            let ret = [];
-            let tmp = rotate_vector({x: x, y: y}, angle);
-            ret.push([tmp.x, tmp.y]);
-            tmp = rotate_vector({x: x, y: y}, -angle);
-            ret.push([tmp.x, tmp.y]);
-            return ret;
-        }
-
-        init(){
-            this.wave_center = [this.x, this.y];
-            this.wave_ends = this.get_wave_ends(this.x, this.y, this.spread);
-            this.center_speed = [this.x * this.speed, this.y * this.speed];
-            this.wave_ends_speed = [
-                [this.wave_ends[0][0] * this.speed, this.wave_ends[0][1] * this.speed],
-                [this.wave_ends[1][0] * this.speed, this.wave_ends[1][1] * this.speed],
-            ]
-        }
-        
-        update(){
-            this.draw_curve();
-            if (get_timestamp() >= this.alive_till){
-                this.deleted = true;
-            }
-        }
-
-    }
-
     class Wave{
 
-        constructor(origin, length, initial_rotation){
-            this.length = length;
+        constructor(
+            ctx,
+            origin,
+            length,
+            initial_rotation = 0,
+            rotation_speed = 0,
+            wave_speed = 1,
+            wave_direction = 1,
+            wave_thickness = 0.8
+        ){
             this.origin = origin;
-            this.initial_rotation = initial_rotation;
+            this.l = length;
+            this.current_rotation = initial_rotation * wave_direction;
+            this.rotation_speed = rotation_speed * wave_direction;
+            this.wave_speed = wave_speed;
+            this.wave_direction = wave_direction;
+            this.wave_thickness = wave_thickness;
             this.ctx = ctx;
             this.curve_points = [];
             this.init();
+            this.deleted = false;
+            this.counter = 0;
+            this.max_iterations = 50 / this.wave_speed;
         }
 
-        init(){
+        init() {
 
             let half_base_vector = {
                 x: 0,
-                y: -this.length / 2
+                y: -this.l / 2
             }
-         
-            //curve 0 point 0
+
+            //curve 1 point 0
             this.curve_points.push({
-                update: false,
                 x: 0,
-                y: 0
+                y: 0,
+                real: { x: 0, y: 0 },
             });
 
             //curve 1 point 1
             this.curve_points.push({
-                update: true,
-                local_origin: add_vec({...half_base_vector}, { x: 15, y: 20}),
-                base: rotate_vector({...half_base_vector}, -120),
-                speed: 1.8,
+                local_origin: add_vec(
+                    { ...half_base_vector },
+                    { x: this.l * this.wave_direction * 0.075, y: this.l * 0.1 }
+                ),
+                base: rotate_vector({ ...half_base_vector }, -120 * this.wave_direction),
+                real: { x: 0, y: 0 },
+                speed: 1.5 * this.wave_speed * this.wave_direction,
             });
+
+            //curve 1 point 2
+            this.curve_points.push({
+                local_origin: add_vec(
+                    { ...half_base_vector },
+                    { x: this.l * this.wave_direction * 0, y: this.l * 0 }
+                ),
+                base: rotate_vector({ ...half_base_vector }, -60 * this.wave_direction),
+                real: { x: 0, y: 0 },
+                speed: 3.5 * this.wave_speed * this.wave_direction,
+            });
+
+            //curve 1 point 3
+            this.curve_points.push({
+                local_origin: add_vec(
+                    mul_vec({ ...half_base_vector }, 0.8),
+                    { x: this.l * this.wave_direction * -0.2, y: this.l * 0 }
+                ),
+                base: rotate_vector({ ...half_base_vector }, 30 * this.wave_direction),
+                real: { x: 0, y: 0 },
+                speed: 1.5 * this.wave_speed * this.wave_direction,
+            });
+            this.wave_tip = this.curve_points[3].real;
+
+            //curve 2 point 1
+            this.curve_points.push({
+                local_origin: { x: 0, y: 0 },
+                base: rotate_vector(mul_vec({...half_base_vector}, this.wave_thickness), -90 * this.wave_direction),
+                real: { x: 0, y: 0 },
+                speed: 0,
+            });
+            this.wave_end = this.curve_points[4].real;
 
             //curve 2 point 2
             this.curve_points.push({
-                update: true,
-                local_origin: add_vec({...half_base_vector}, { x: 0, y: 0}),
-                base: rotate_vector({...half_base_vector}, -60),
-                speed: 3,
+                local_origin: add_vec(
+                    { ...half_base_vector },
+                    { x: -this.l * this.wave_direction * 0.125, y: this.l * 0.075 }
+                ),
+                base: rotate_vector(mul_vec({ ...half_base_vector }, 1.3), -110 * this.wave_direction),
+                real: { x: 0, y: 0 },
+                speed: 2.6 * this.wave_speed * this.wave_direction,
             });
 
-            //curve 3 point 3
+            //curve 2 point 3
             this.curve_points.push({
-                update: true,
-                local_origin: add_vec(mul_vec({...half_base_vector}, 0.8), { x: -40, y: 0}),
-                base: rotate_vector({...half_base_vector}, 30),
-                speed: 1.5,
-            });
-
-            //curve 4 point 4
-            this.curve_points.push({
-                update: false,
-                x: this.length * -0.35,
-                y: 0,
-            });
-
-            //curve 5 point 5
-            this.curve_points.push({
-                update: true,
-                local_origin: add_vec({...half_base_vector}, { x: -this.length * 0.125, y: this.length * 0.075}),
-                base: rotate_vector(mul_vec({...half_base_vector}, 1.3), -110),
-                speed: 2.6,
-            });
-
-            //curve 6 point 6
-            this.curve_points.push({
-                update: true,
-                local_origin: add_vec({...half_base_vector}, { x: -this.length * 0.025, y: -this.length * 0.1}),
-                base: rotate_vector(mul_vec({...half_base_vector}, 1.1), -60),
-                speed: 3.5,
+                local_origin: add_vec(
+                    { ...half_base_vector },
+                    { x: -this.l * this.wave_direction * 0.025, y: -this.l * 0.1 }
+                ),
+                base: rotate_vector(mul_vec({ ...half_base_vector }, 1.2), -50 * this.wave_direction),
+                real: { x: 0, y: 0 },
+                speed: 3.5 * this.wave_speed * this.wave_direction,
             });
 
         }
 
         update_rotating_point(point){
-            if(point.update){
-                rotate_vector(point.base, point.speed);
-                point.x = point.base.x + point.local_origin.x;
-                point.y = point.base.y + point.local_origin.y;
-            }
+            rotate_vector(point.base, point.speed);
+            point.x = point.base.x + point.local_origin.x;
+            point.y = point.base.y + point.local_origin.y;
+            rotate_vector(point, this.current_rotation);
         }
 
         update_rotating_point_with_real(point){
-            point.rx = point.x + this.origin.x;
-            point.ry = point.y + this.origin.y;
+            point.real.x = point.x + this.origin.x;
+            point.real.y = point.y + this.origin.y;
         }
 
         update_wave(){
-            for(let i=0; i<7; i++){
+            for(let i=1; i<7; i++){
                 this.update_rotating_point(this.curve_points[i]);
             }
+            this.current_rotation += this.rotation_speed;
         }
 
         update_wave_with_real(){
@@ -280,8 +236,8 @@ function great_waves(canvas_id, wave_init_speed = 1){
         draw_debug_points(){
             for(let i=0; i<7; i++){
                 this.ctx.fillRect(
-                    this.curve_points[i].rx,
-                    this.curve_points[i].ry,
+                    this.curve_points[i].real.x,
+                    this.curve_points[i].real.y,
                     2,
                     2
                 );
@@ -289,59 +245,72 @@ function great_waves(canvas_id, wave_init_speed = 1){
         }
 
         draw_curves(){
-
             ctx.moveTo(
-                this.curve_points[0].rx,
-                this.curve_points[0].ry
+                this.curve_points[0].real.x,
+                this.curve_points[0].real.y
             );
 
             ctx.bezierCurveTo(
-                this.curve_points[1].rx,
-                this.curve_points[1].ry,
-                this.curve_points[2].rx,
-                this.curve_points[2].ry,
-                this.curve_points[3].rx,
-                this.curve_points[3].ry
-            );
-
-            ctx.moveTo(
-                this.curve_points[4].rx,
-                this.curve_points[4].ry
+                this.curve_points[1].real.x,
+                this.curve_points[1].real.y,
+                this.curve_points[2].real.x,
+                this.curve_points[2].real.y,
+                this.curve_points[3].real.x,
+                this.curve_points[3].real.y
             );
 
             ctx.bezierCurveTo(
-                this.curve_points[5].rx,
-                this.curve_points[5].ry,
-                this.curve_points[6].rx,
-                this.curve_points[6].ry,
-                this.curve_points[3].rx,
-                this.curve_points[3].ry
+                this.curve_points[6].real.x,
+                this.curve_points[6].real.y,
+                this.curve_points[5].real.x,
+                this.curve_points[5].real.y,
+                this.curve_points[4].real.x,
+                this.curve_points[4].real.y
             );
         }
 
         draw(){
+            if(this.deleted) return;
+            if(this.counter >= this.max_iterations){
+                this.deleted = true;
+            }
+            this.counter += 1;
             this.update_wave();
             this.update_wave_with_real();
             this.ctx.save();
             this.ctx.beginPath();
-            this.ctx.strokeStyle = "rgb(255, 255, 255)";
-            this.ctx.fillStyle = "rgb(255, 255, 255)";
+            this.ctx.lineCap = "round";
+            // let fill_gradient = this.ctx.createRadialGradient(this.wave_tip.x, this.wave_tip.y, 0, this.wave_tip.x, this.wave_tip.y, this.l);
+            // fill_gradient.addColorStop(0, "rgb(255, 255, 255)");
+            // fill_gradient.addColorStop(0.5, "rgb(255, 255, 255)");
+            // fill_gradient.addColorStop(1, "rgba(0,0,0,0)");
+            this.ctx.lineWidth = 1;
+            this.ctx.strokeStyle = "white";
+            this.ctx.fillStyle = "rgb(0, 0, 30)";
             this.draw_curves();
-            this.draw_debug_points();
+            this.ctx.fill();
             this.ctx.stroke();
+            // this.draw_debug_points();
             this.ctx.restore();
         }
 
     }
 
-    function animate() {
+    function animate(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // update_waves();
-        wave.draw();
-        setTimeout(requestAnimationFrame, 50, animate);
+        update_waves();
+        setTimeout(requestAnimationFrame, 0, animate);
     }
-    
-    let wave = new Wave({x: 500, y: 700 }, 200, ctx);
+
+    waves.push(new Wave(ctx, {x: 500, y: 700 }, 50, 45, 1, 1));
+    waves.push(new Wave(ctx, waves[waves.length - 1].wave_end, 50, 0, 1));
+    waves.push(new Wave(ctx, waves[waves.length - 1].wave_end, 50, -45, 1, 1));
+    waves.push(new Wave(ctx, waves[waves.length - 1].wave_end, 50, -90, 1, 1));
+
+    waves.push(new Wave(ctx, {x: 550, y: 700 }, 50, 45, 1, 1, 1));
+    waves.push(new Wave(ctx, waves[waves.length - 1].wave_end, 50, 0, 1, 1, 1));
+    waves.push(new Wave(ctx, waves[waves.length - 1].wave_end, 50, -45, 1, 1, 1));
+    waves.push(new Wave(ctx, waves[waves.length - 1].wave_end, 50, -90, 1, 1, 1));
 
     animate();
 
