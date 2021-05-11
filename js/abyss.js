@@ -33,13 +33,6 @@ function abyss(
         canvas.height = window.innerHeight;
     });
 
-    function darken_color(rgb, step = 1, return_rgb) {
-        step = Math.min(Math.max(0, step), 100);
-        for (let i = 0; i < 3; i++) {
-            return_rgb[i] = rgb[i] - ((rgb[i] / 100) * step);
-        }
-    }
-
     // some stupid custom function
     function curve(x) {
         // more z more squares.

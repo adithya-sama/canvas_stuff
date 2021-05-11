@@ -2,14 +2,17 @@
 
 <head>
     <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/fabric.css">
     <script src="js/common.js"></script>
     <script src="js/fabric.js"></script>
 </head>
 
 <body>
+    <div class="fade_out" ></div>
     <canvas id="canvas_id"></canvas>
     <script>
         run_fabric("canvas_id");
+        document.getElementsByClassName('fade_out')[0].style.opacity = 0;
     </script>
 </body>
 
