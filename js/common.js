@@ -1,18 +1,16 @@
-function init_canvas(canvas, on_resize){
+function init_canvas(canvas){
     if(typeof(canvas) == 'string')
         canvas = /** @type {HTMLCanvasElement} */ (document.getElementById(canvas));
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    let ctx = canvas.getContext("2d");
-
     window.addEventListener("resize", () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        if(on_resize)
-            on_resize();
     });
+
+    let ctx = canvas.getContext("2d");
     
     return ctx;
 

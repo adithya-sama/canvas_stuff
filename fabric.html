@@ -8,11 +8,13 @@
 </head>
 
 <body>
-    <div class="fade_out" ></div>
     <canvas id="canvas_id"></canvas>
+    <div class="title_wrapper">
+        <div class="title">Fabric</div>
+    </div>
     <script>
         run_fabric("canvas_id");
-        document.getElementsByClassName('fade_out')[0].style.opacity = 0;
+        document.getElementById('canvas_id').style.opacity = 1;
     </script>
 </body>
 
