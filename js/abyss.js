@@ -135,14 +135,14 @@ function abyss(
 function init_title_animation() {
 
     let boxes = document.getElementsByClassName("boxes");
-    let text_div = document.getElementById("center_text");
+    let text_div = document.getElementsByClassName("text_id")[3];
 
     text_div.onmouseenter = function () {
-        let width = 10;
+        let width = 5;
         let size = 200;
         let direction = 45;
         let td = 3;
-        let z_index = 9; 
+        let z_index = 6; 
         for (let i = 0; i < boxes.length; i++) {
             boxes[i].style =
                 `
@@ -155,17 +155,19 @@ function init_title_animation() {
                 transition-duration: ${td}s;
                 z-index: ${z_index};
                 `;
-            width -= 2;
+            width -= 1;
             size -= 30;
             direction += 90;
             z_index -= 1;
-            // td -= 0.5;
+            td -= 0.2;
         }
     }
 
     text_div.onmouseleave = function () {
+        let z_index = 6; 
         for (let i = 0; i < boxes.length; i++) {
-            boxes[i].style = "transition-duration: 2s";
+            boxes[i].style = `transition-duration: 2s; z-index: ${z_index}`;
         }
+        z_index -= 1;
     }
 }

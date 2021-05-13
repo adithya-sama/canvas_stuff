@@ -1,55 +1,34 @@
 <html>
-
     <head>
-        <style>
-            body {
-                display: flex;
-                flex-direction: row;
-                margin: 0px;
-                border: 0px;
-            }
-
-            .frame_column {
-                position: relative;
-                margin: 0px;
-                border: 0px;
-                height: 100%;
-                width: 100%;
-            }
-
-            iframe {
-                margin: 0px;
-                border: 0px;
-                height: 100%;
-                width: 100%;
-            }
-
-            .cover_button {
-                position: absolute;
-                top: 0;
-                height: 100%;
-                width: 100%;
-                z-index: 1;
-            }
-
-        </style>
-        <script>
-            function goto(page){
-                console.log("hello");
-                window.location = page;
-            }
-        </script>
+        <link rel="stylesheet" href="css/index.css">
+        <script src="js/index.js"></script>
     </head>
-
     <body>
-        <div class="frame_column">
+        <div class="explanation_wrapper">
+            <div id="explanation">
+                Just some things i made.
+            </div>
+        </div>
+        <div class="frame_drawer">
+            <div class="frame_wrapper">
+                <iframe class="clickable_frame" src="abyss_1.html"></iframe>
+                <div class="frame_button" onclick="goto_page('abyss_1.html')"></div>
+            </div>
+            <div class="frame_wrapper">
+                <iframe class="clickable_frame" src="abyss_2.html"></iframe>
+                <div class="frame_button" onclick="goto_page('abyss_2.html')"></div>
+            </div>
+            <div class="frame_wrapper">
+                <iframe class="clickable_frame" src="fabric.html"></iframe>
+                <div class="frame_button" onclick="goto_page('fabric.html')"></div>
+            </div>
+        </div>
+        <!-- <div class="frame_column" onclick="goto_page('abyss_1.html')">
             <iframe src="abyss_1.html"></iframe>
-            <div class="cover_button" onclick="goto('abyss_1.html')"></div>
         </div>
         <div class="frame_column">
             <iframe src="abyss_2.html"></iframe>
-            <div class="cover_button" onclick="goto('abyss_2.html')"></div>
-        </div>
+            <div class="cover_button" onclick="goto_page('abyss_2.html')"></div>
+        </div> -->
     </body>
-
 </html>
