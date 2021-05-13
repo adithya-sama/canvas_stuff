@@ -7,7 +7,7 @@ body {
     transition: 3s;
 }
 
-.title_wrapper{
+.title{
     position: absolute;
     color: rgb(255, 255, 255);
     font-size: 5rem;

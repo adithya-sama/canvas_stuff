@@ -7,7 +7,7 @@
     font-size: 50px;
     font-family: system-ui;
     font-weight: lighter;
-    z-index: 2;
+    z-index: 10;
 }
 
 .boxes {
@@ -19,5 +19,5 @@
     left: 50%;
     border-style: solid;
     border-width: 0px;
-    transition-timing-function: ease;
+    transition-timing-function: ease-in-out;
 }

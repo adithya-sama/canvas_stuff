@@ -131,3 +131,41 @@ function abyss(
 
     animate();
 }
+
+function init_title_animation() {
+
+    let boxes = document.getElementsByClassName("boxes");
+    let text_div = document.getElementById("center_text");
+
+    text_div.onmouseenter = function () {
+        let width = 10;
+        let size = 200;
+        let direction = 45;
+        let td = 3;
+        let z_index = 9; 
+        for (let i = 0; i < boxes.length; i++) {
+            boxes[i].style =
+                `
+                transform: translate(-50%, -50%) rotate(${direction}deg);
+                border-width:${width}px;
+                width:${size}px;
+                height:${size}px;
+                background-color: rgba(0, 0, 0, 0.5);
+                border-color:rgb(255, 255, 255);
+                transition-duration: ${td}s;
+                z-index: ${z_index};
+                `;
+            width -= 2;
+            size -= 30;
+            direction += 90;
+            z_index -= 1;
+            // td -= 0.5;
+        }
+    }
+
+    text_div.onmouseleave = function () {
+        for (let i = 0; i < boxes.length; i++) {
+            boxes[i].style = "transition-duration: 2s";
+        }
+    }
+}

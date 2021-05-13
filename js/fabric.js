@@ -11,18 +11,18 @@ class Fabric{
         this.move_speed_decay = 0.99;
         this.size = 1;
         this.max_step = max_step;
+        // dont change slant_ratio. all the mouse calculations are based on the lines being 45 degress.
         this.slant_ratio = 1;
-        this.fabric_initialised = false;
         this.frame_num = 0;
         this.current_density = 0;
         this.thread_opacity_speed = 1.003;
-        this.split_opacity = 0.8;
+        this.split_at_opacity = 0.8;
         this.dust_lines = [];
         this.threads = [];
         this.deleted_threads = [];
         this.pluck_state = 0;
         this.plucked_thread = undefined;
-        this.pluck_release_dist = 100;
+        this.pluck_release_dist = 80;
         this.pluck_show_threads = [
             {
                 start: {
@@ -259,7 +259,7 @@ class Fabric{
             this.deleted_threads.push(index);
             return;
         }
-        if(thread.opacity >= this.split_opacity){
+        if(thread.opacity >= this.split_at_opacity){
             let random_move_direction = this.get_random_direction();
             let random_opacity_direction = this.get_random_direction();
             thread.opacity = this.get_random_opacity();
