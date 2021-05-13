@@ -7,7 +7,7 @@ body{
 .explanation_wrapper{
     position: absolute;
     background-color: rgba(0, 0, 0, 0.75);
-    width: 100%;
+    width: -webkit-fill-available;
     height: 10%;
     text-align: left;
     padding: 50px;
