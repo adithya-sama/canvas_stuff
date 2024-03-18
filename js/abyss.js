@@ -151,7 +151,7 @@ function init_title_animation() {
                 width:${size}px;
                 height:${size}px;
                 background-color: rgba(0, 0, 0, 0.5);
-                border-color:rgb(255, 255, 255);
+                border-color:rgb(0, 0, 0);
                 transition-duration: ${td}s;
                 z-index: ${z_index};
                 `;
