@@ -158,6 +158,7 @@ function init_title_animation() {
             width -= 1;
             size -= 30;
             direction += 90;
+            direction *= (Math.random() > 0.5 ? 1 : -1);
             z_index -= 1;
             td -= 0.2;
         }
