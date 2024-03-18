@@ -154,6 +154,7 @@ function init_title_animation() {
                 border-color:rgb(100, 100, 100);
                 transition-duration: ${td}s;
                 z-index: ${z_index};
+                border-radius: 15px;
                 `;
             width -= 1;
             size -= 30;
