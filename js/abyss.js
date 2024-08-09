@@ -89,6 +89,7 @@ function abyss(
             this.y = (this.move_step + this.y) % canvas.height;
             this.mx = canvas.width - this.x;
             this.my = this.y;
+            this.degree_step = rand_range(min_rotation_step, max_rotation_step);
             this.degrees = (this.degrees + this.degree_step) % 360;
 
             if (
