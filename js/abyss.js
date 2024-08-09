@@ -6,7 +6,8 @@ function abyss(
     min_rotation_step,
     max_rotation_step,
     color_set,
-    fade_rate
+    fade_rate,
+    number_of_squares
 ) {
 
     let canvas = /** @type {HTMLCanvasElement} */ (document.getElementById(canvas_id));
@@ -114,7 +115,7 @@ function abyss(
 
     }
 
-    let n_of_s = 64;
+    let n_of_s = number_of_squares;
 
     let squares = [];
 
